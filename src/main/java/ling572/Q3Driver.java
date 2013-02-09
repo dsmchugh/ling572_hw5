@@ -16,9 +16,9 @@ public class Q3Driver {
 		
 		try {
 			List<Instance> instances = Instance.indexInstances(driver.trainingData);
-			EmpiricalExpectations expectations = new EmpiricalExpectations();
+			Model expectations = new Model();
 			expectations.train(instances);
-			expectations.generateOutput(driver.outputFile);
+			expectations.empExpOutput(driver.outputFile);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);

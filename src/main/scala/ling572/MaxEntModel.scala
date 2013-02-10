@@ -4,6 +4,7 @@ import scala.collection._
 import scala.collection.immutable
 import util.Instance
 import collection.immutable.HashMap
+import java.util
 
 class MaxEntModel {
 
@@ -26,7 +27,17 @@ class MaxEntModel {
   }
 
   lazy val classLabels = classLambdas.keys.toSeq.sorted
-  
+
+  def classLambdasJava: java.util.HashMap[String, java.util.HashMap[String,java.lang.Double]] = {
+    val cmap = new java.util.HashMap[String,java.util.HashMap[String,java.lang.Double]]()
+    for ((label,lambdas) <- classLambdas) {
+      val fmap = new java.util.HashMap[String,java.lang.Double]()
+      lambdas.foreach(kv => fmap.put(kv._1, kv._2) )
+      cmap.put(label,fmap)
+    }
+    cmap
+  }
+
   val classLinePattern = """FEATURES FOR CLASS ([\S]+)""".r 
   val featureLinePattern = """[\s]+([\S]+)[\s]+([\S]+)""".r
   var currentClass:String = ""

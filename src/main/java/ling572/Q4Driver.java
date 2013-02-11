@@ -4,19 +4,28 @@ import java.io.*;
 import java.util.*;
 import ling572.util.Instance;
 
-public class Q3Driver {
+public class Q4Driver {
 	private File trainingData;
 	private File outputFile;
+	private File modelFile;
 	
 
 	public static void main(String[] args) {
-		Q3Driver driver = new Q3Driver();
+		Q4Driver driver = new Q4Driver();
 		driver.parseArgs(args);
 		
 		try {
 			List<Instance> instances = Instance.indexInstances(driver.trainingData);
-			EmpiricalExpectation expectation = new EmpiricalExpectation();
+			
+			ModelExpectation expectation = new ModelExpectation();
 			expectation.setInstances(instances);
+			
+			if (driver.modelFile != null) {
+				MaxEntModel maxEnt = new MaxEntModel();
+				maxEnt.loadFromFile(driver.modelFile);
+				expectation.setMaxEntModel(maxEnt);
+			}
+			
 			expectation.build();
 			expectation.generateOutput(driver.outputFile);
 		} catch (IOException e) {
@@ -26,8 +35,8 @@ public class Q3Driver {
 	}
 	
 	public void parseArgs(String[] args) {
-		if (args.length != 2)
-			exit("Error: usage Q3Driver [training_data] [output_file]");
+		if (args.length < 2 || args.length > 3)
+			exit("Error: usage Q4Driver training_data output_file [model_file]");
 		
 		try {
 			this.trainingData = new File(args[0]);
@@ -40,6 +49,15 @@ public class Q3Driver {
 		} catch (Exception e){
 			exit("Error: invalid output_file");
 		}
+		
+		if (args.length == 3) {
+			try {
+				this.modelFile = new File(args[2]);
+			} catch(Exception e) {
+				exit("Error: invalid model_file");
+			}
+		} else
+			this.modelFile = null;
 	}
 	
 	private static void exit(String errorText) {

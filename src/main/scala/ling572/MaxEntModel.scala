@@ -74,7 +74,7 @@ class MaxEntModel {
     val scores = scoreInstance(instance)
     val map = new java.util.HashMap[String,java.lang.Double]()
     scores._2.foreach(kv => map.put(kv._1, kv._2))
-    scores
+    map
   }
 
 }

@@ -5,6 +5,7 @@ import scala.collection.immutable
 import util.Instance
 import collection.immutable.HashMap
 import java.util
+import java.io.File
 
 class MaxEntModel {
 
@@ -41,6 +42,10 @@ class MaxEntModel {
   val classLinePattern = """FEATURES FOR CLASS ([\S]+)""".r 
   val featureLinePattern = """[\s]+([\S]+)[\s]+([\S]+)""".r
   var currentClass:String = ""
+
+  def loadFromFile(file: File) {
+    scala.io.Source.fromFile(file).getLines().foreach(parseLine)
+  }
 
   def parseLine(line: String) {
 	  line match {

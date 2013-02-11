@@ -4,7 +4,6 @@ import scala.collection._
 import scala.collection.immutable
 import util.Instance
 import collection.immutable.HashMap
-import java.util
 import java.io.File
 
 class MaxEntModel {

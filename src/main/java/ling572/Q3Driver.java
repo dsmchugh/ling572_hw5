@@ -3,6 +3,7 @@ package ling572;
 import java.io.*;
 import java.util.*;
 import ling572.util.Instance;
+import ling572.util.SVMLightReader;
 
 public class Q3Driver {
 	private File trainingData;
@@ -13,16 +14,11 @@ public class Q3Driver {
 		Q3Driver driver = new Q3Driver();
 		driver.parseArgs(args);
 		
-		try {
-			List<Instance> instances = Instance.indexInstances(driver.trainingData);
-			EmpiricalExpectation expectation = new EmpiricalExpectation();
-			expectation.setInstances(instances);
-			expectation.build();
-			expectation.generateOutput(driver.outputFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+		List<Instance> instances = SVMLightReader.indexInstances(driver.trainingData);
+		EmpiricalExpectation expectation = new EmpiricalExpectation();
+		expectation.setInstances(instances);
+		expectation.build();
+		expectation.generateOutput(driver.outputFile);
 	}
 	
 	public void parseArgs(String[] args) {

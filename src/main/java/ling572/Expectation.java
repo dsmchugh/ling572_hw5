@@ -7,11 +7,16 @@ import ling572.util.Frequency;
 import ling572.util.Instance;
 
 public abstract class Expectation {
-	
+	protected List<Instance> instances;
 	protected int instanceCount;
 	protected Map<String, Frequency<String>> rawCounts = new HashMap<String, Frequency<String>>();
 	private Map<String, Map<String, Double>> expectations = new HashMap<String, Map<String, Double>>();
-	protected List<Instance> instances;
+		
+	public abstract void build();
+	
+	protected abstract double calcExpectation(String y, String t);
+	
+	protected abstract double getCount(String y, String t);
 	
  	public void setInstances(List<Instance> instances) {
 		this.instances = instances;
@@ -49,13 +54,23 @@ public abstract class Expectation {
 		return features;
 	}
 
-	public void generateOutput(File output_file) throws IOException {
-		try (ExpectationOutput output = new ExpectationOutput(output_file)) {
+	public void generateOutput(File output_file) {
+		final String SEPARATOR = " ";
+		
+		try(BufferedWriter writer = new BufferedWriter(new FileWriter(output_file))) {
 			for (String y : this.getClasses()) {	
 				for (String t : this.getFeaturesInClass(y)) {
 					double expectation = this.getExpectation(y, t);
 					double count = this.getCount(y, t);
-					output.printExpectations(y,t, expectation, count);
+
+					writer.write(y);
+					writer.write(SEPARATOR);
+					writer.write(t);
+					writer.write(SEPARATOR);
+					writer.write(Double.toString(expectation));
+					writer.write(SEPARATOR);
+					writer.write(Double.toString(count));
+					writer.newLine();
 				}
 			}
 		} catch (IOException e) {
@@ -78,10 +93,6 @@ public abstract class Expectation {
 		return exp;
 	}
 	
-	protected abstract double getCount(String y, String t);
-	
-	public abstract void build();
-	
 	protected void setExpectation(String y, String t, double exp) {
 		Map<String, Double> classExp = this.expectations.get(y);
 		
@@ -92,6 +103,4 @@ public abstract class Expectation {
 		
 		classExp.put(t, exp);
 	}
-	
-	protected abstract double calcExpectation(String y, String t);
 }

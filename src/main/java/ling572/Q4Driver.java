@@ -3,6 +3,7 @@ package ling572;
 import java.io.*;
 import java.util.*;
 import ling572.util.Instance;
+import ling572.util.SVMLightReader;
 
 public class Q4Driver {
 	private File trainingData;
@@ -13,25 +14,20 @@ public class Q4Driver {
 	public static void main(String[] args) {
 		Q4Driver driver = new Q4Driver();
 		driver.parseArgs(args);
+
+		List<Instance> instances = SVMLightReader.indexInstances(driver.trainingData);
 		
-		try {
-			List<Instance> instances = Instance.indexInstances(driver.trainingData);
-			
-			ModelExpectation expectation = new ModelExpectation();
-			expectation.setInstances(instances);
-			
-			if (driver.modelFile != null) {
-				MaxEntModel maxEnt = new MaxEntModel();
-				maxEnt.loadFromFile(driver.modelFile);
-				expectation.setMaxEntModel(maxEnt);
-			}
-			
-			expectation.build();
-			expectation.generateOutput(driver.outputFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
+		ModelExpectation expectation = new ModelExpectation();
+		expectation.setInstances(instances);
+		
+		if (driver.modelFile != null) {
+			MaxEntModel maxEnt = new MaxEntModel();
+			maxEnt.loadFromFile(driver.modelFile);
+			expectation.setMaxEntModel(maxEnt);
 		}
+		
+		expectation.build();
+		expectation.generateOutput(driver.outputFile);
 	}
 	
 	public void parseArgs(String[] args) {

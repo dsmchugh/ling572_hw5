@@ -58,7 +58,7 @@ class MaxEntModel {
     val scores = new mutable.HashMap[String,Double]()
     for ((label,lambdas) <- classLambdas) {
       val score = lambdas
-        .filterKeys( k => line.hasFeature(k))
+        .filterKeys( k => k.equals("<default>") || line.hasFeature(k))
         .values
         .sum
       scores.put(label, math.exp(score))

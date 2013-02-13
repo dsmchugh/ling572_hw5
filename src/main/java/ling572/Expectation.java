@@ -62,14 +62,18 @@ public abstract class Expectation {
 				for (String t : this.getFeaturesInClass(y)) {
 					double expectation = this.getExpectation(y, t);
 					double count = this.getCount(y, t);
-
+					
+					int intCount = (int)count;
+					
+					String stringCount = intCount == count ? Integer.toString(intCount) : Double.toString(count);
+					
 					writer.write(y);
 					writer.write(SEPARATOR);
 					writer.write(t);
 					writer.write(SEPARATOR);
 					writer.write(Double.toString(expectation));
 					writer.write(SEPARATOR);
-					writer.write(Double.toString(count));
+					writer.write(stringCount);
 					writer.newLine();
 				}
 			}

@@ -56,11 +56,13 @@ class MaxEntModel {
 
   def scoreInstance(line: Instance): (String, immutable.ListMap[String,Double] ) = {
     val scores = new mutable.HashMap[String,Double]()
-    for ((label,lambdas) <- classLambdas) {
-      val score = lambdas
-        .filterKeys( k => k.equals("<default>") || line.hasFeature(k))
+    classLambdas.foreach { case (label:String,lambdas:Map[String,Double]) =>
+      val score = lambdas.getOrElse("<default>", 0.0) +
+        lambdas
+        .filterKeys( k => line.hasFeature(k))
         .values
         .sum
+
       scores.put(label, math.exp(score))
     }
     val label = scores.maxBy(_._2)._1

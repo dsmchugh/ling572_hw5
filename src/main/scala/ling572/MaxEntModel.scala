@@ -1,10 +1,14 @@
 package ling572
 
-import scala.collection._
-import scala.collection.immutable
+import collection._
 import util.Instance
 import collection.immutable.HashMap
 import java.io.File
+import scala.collection.JavaConverters._
+import scala.Some
+import java.util.Map.Entry
+import scala.Some
+import collection.immutable
 
 class MaxEntModel {
 
@@ -54,20 +58,22 @@ class MaxEntModel {
 	  }	  
 	}
 
-  def scoreInstance(line: Instance): (String, immutable.ListMap[String,Double] ) = {
+  def scoreInstance(instance: Instance): (String, immutable.ListMap[String,Double] ) = {
     val scores = new mutable.HashMap[String,Double]()
+    val sInstance = instance.getFeatures.asScala
     for ((label,lambdas) <- classLambdas) {
       val score = lambdas.getOrElse("<default>",0.0) +
-        lambdas
-        .map({ case (fLabel:String, fLambda:Double) =>
-          fLambda * line.getFeatureValueOrDefault(fLabel,0)
-        })
+        sInstance
+          .map({ case (k: String,v:Integer) =>
+            v * lambdas.getOrElse(k,0.0)
+          })
         .sum
       scores.put(label, math.exp(score))
     }
-    val label = scores.maxBy(_._2)._1
+    //val label = scores.maxBy(_._2)._1
     val normalizer = scores.values.sum
     val normedScores = immutable.ListMap() ++ scores.toList.sortBy(-_._2).map{ kv => (kv._1 , kv._2 / normalizer  )}
+    val label = normedScores.head._1
     (label,normedScores)
   }
 

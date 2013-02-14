@@ -2,7 +2,7 @@ package ling572
 
 import java.io.{PrintWriter, File}
 import util.{ConditionalFreqDist, CountMap, SVMLightReader}
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.collection._
 
 object Q2Driver extends App {
@@ -19,7 +19,7 @@ object Q2Driver extends App {
     	scala.io.Source.fromFile(args(1)).getLines().foreach(model.parseLine)
 
       // parse test vectors
-      val testVectors = SVMLightReader.indexInstances(new File(args(0)))
+      val testVectors = SVMLightReader.indexInstances(new File(args(0))).asScala
 
       // helper to write sys file lines
       val sysOut = new PrintWriter(args(2))
@@ -35,7 +35,7 @@ object Q2Driver extends App {
       var count = 0
       var correct = 0.0
       val confusionMatrix = new ConditionalFreqDist[String]()
-      for (instance <- testVectors) {
+      testVectors.foreach { instance =>
         val (label, scores) = model.scoreInstance(instance)
         writeSysOut(count, label, scores)
         count += 1

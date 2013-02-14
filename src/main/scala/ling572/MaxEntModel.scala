@@ -23,7 +23,8 @@ class MaxEntModel {
 
   // make immutable
   lazy val classLambdas: immutable.Map[String,immutable.Map[String,Double]] = {
-     lambdasByClass.map(kv => (kv._1, kv._2.toMap)).toMap
+     new immutable.ListMap[String,immutable.Map[String,Double]]() ++
+       lambdasByClass.map(kv => (kv._1, new immutable.ListMap[String,Double]() ++ kv._2.toMap)).toMap
   }
 
   lazy val classLabels = classLambdas.keys.toSeq.sorted
@@ -67,7 +68,8 @@ class MaxEntModel {
     }
     val label = scores.maxBy(_._2)._1
     val normalizer = scores.values.sum
-    val normedScores = immutable.ListMap() ++ scores.toList.sortBy(-_._2).map{ kv => (kv._1 , kv._2 / normalizer  )}
+    val normedScores = immutable.ListMap() ++ scores.toList.sortBy(-_._2).map{ case (label:String, score:Double) =>
+      (label , score / normalizer  )}
     (label,normedScores)
   }
 

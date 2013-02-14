@@ -23,8 +23,7 @@ class MaxEntModel {
 
   // make immutable
   lazy val classLambdas: immutable.Map[String,immutable.Map[String,Double]] = {
-     new immutable.ListMap[String,immutable.Map[String,Double]]() ++
-       lambdasByClass.map(kv => (kv._1, new immutable.ListMap[String,Double]() ++ kv._2.toMap)).toMap
+     lambdasByClass.map(kv => (kv._1, kv._2.toMap)).toMap
   }
 
   lazy val classLabels = classLambdas.keys.toSeq.sorted
@@ -57,19 +56,18 @@ class MaxEntModel {
 
   def scoreInstance(line: Instance): (String, immutable.ListMap[String,Double] ) = {
     val scores = new mutable.HashMap[String,Double]()
-    classLambdas.foreach { case (label:String,lambdas:Map[String,Double]) =>
-      val score = lambdas.getOrElse("<default>", 0.0) +
+    for ((label,lambdas) <- classLambdas) {
+      val score = lambdas.getOrElse("<default>",0.0) +
         lambdas
-        .filterKeys( k => line.hasFeature(k))
-        .values
+        .map({ case (fLabel:String, fLambda:Double) =>
+          fLambda * line.getFeatureValueOrDefault(fLabel,0)
+        })
         .sum
-
       scores.put(label, math.exp(score))
     }
     val label = scores.maxBy(_._2)._1
     val normalizer = scores.values.sum
-    val normedScores = immutable.ListMap() ++ scores.toList.sortBy(-_._2).map{ case (label:String, score:Double) =>
-      (label , score / normalizer  )}
+    val normedScores = immutable.ListMap() ++ scores.toList.sortBy(-_._2).map{ kv => (kv._1 , kv._2 / normalizer  )}
     (label,normedScores)
   }
 

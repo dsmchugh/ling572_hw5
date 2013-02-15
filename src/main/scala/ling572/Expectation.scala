@@ -1,4 +1,4 @@
-package ling572.port
+package ling572
 
 import ling572.util.{Frequency, Instance}
 

@@ -1,8 +1,7 @@
-package ling572.port
+package ling572
 
 import java.io.File
 import ling572.util.SVMLightReader
-import ling572.MaxEntModel
 import scala.collection.JavaConverters._
 
 

@@ -1,9 +1,8 @@
-package ling572.port
+package ling572
 
 import ling572.util.SVMLightReader
 import java.io.File
-import ling572.MaxEntModel //, ModelExpectation}
-import ling572.port.ModelExpectation
+
 import scala.collection.JavaConverters._
 
 object Q4Driver extends App {

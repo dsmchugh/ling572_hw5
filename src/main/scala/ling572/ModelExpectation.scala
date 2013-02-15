@@ -1,6 +1,5 @@
-package ling572.port
+package ling572
 
-import ling572.MaxEntModel
 import collection.immutable.ListMap
 import collection.JavaConverters._
 

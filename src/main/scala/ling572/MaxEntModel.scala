@@ -2,14 +2,8 @@ package ling572
 
 import collection._
 import util.Instance
-import collection.immutable.HashMap
 import java.io.File
 import scala.collection.JavaConverters._
-import scala.Some
-import java.util.Map.Entry
-import scala.Some
-import scala.Some
-import scala.Some
 import collection.immutable
 
 class MaxEntModel {
@@ -17,7 +11,7 @@ class MaxEntModel {
   var lambdasByClass = new mutable.HashMap[String,mutable.HashMap[String,Double]]()
 
   def addFeatureLambda(classLabel: String, featureLabel: String, lambda: Double) {
-	  val featureMap = lambdasByClass.get(classLabel) match {
+	  lambdasByClass.get(classLabel) match {
 	    case Some(lambdas) => lambdas.put(featureLabel, lambda) 
 	    case None => { 
 	      val lambdas = new mutable.HashMap[String,Double]()

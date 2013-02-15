@@ -1,7 +1,7 @@
 package ling572
 
 import java.io.{PrintWriter, File}
-import util.{ConditionalFreqDist, CountMap, SVMLightReader}
+import util.{ConditionalFreqDist, SVMLightReader}
 import scala.collection.JavaConverters._
 import scala.collection._
 

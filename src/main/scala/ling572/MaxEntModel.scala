@@ -8,6 +8,8 @@ import scala.collection.JavaConverters._
 import scala.Some
 import java.util.Map.Entry
 import scala.Some
+import scala.Some
+import scala.Some
 import collection.immutable
 
 class MaxEntModel {
@@ -26,15 +28,15 @@ class MaxEntModel {
   }
 
   // make immutable
-  lazy val classLambdas: immutable.Map[String,immutable.Map[String,Double]] = {
+  lazy val constLambdasByClass = {
      lambdasByClass.map(kv => (kv._1, kv._2.toMap)).toMap
   }
 
-  lazy val classLabels = classLambdas.keys.toSeq.sorted
+  lazy val classLabels = constLambdasByClass.keys.toSeq.sorted
 
   def classLambdasJava: java.util.HashMap[String, java.util.HashMap[String,java.lang.Double]] = {
     val cmap = new java.util.HashMap[String,java.util.HashMap[String,java.lang.Double]]()
-    for ((label,lambdas) <- classLambdas) {
+    for ((label,lambdas) <- constLambdasByClass) {
       val fmap = new java.util.HashMap[String,java.lang.Double]()
       lambdas.foreach(kv => fmap.put(kv._1, kv._2) )
       cmap.put(label,fmap)
@@ -61,16 +63,15 @@ class MaxEntModel {
   def scoreInstance(instance: Instance): (String, immutable.ListMap[String,Double] ) = {
     val scores = new mutable.HashMap[String,Double]()
     val sInstance = instance.getFeatures.asScala
-    for ((label,lambdas) <- classLambdas) {
-      val score = lambdas.getOrElse("<default>",0.0) +
-        sInstance
+    for ((label,lambdas) <- constLambdasByClass) {
+      var score = lambdas.getOrElse("<default>",0.0)
+      score += sInstance
           .map({ case (k: String,v:Integer) =>
-            v * lambdas.getOrElse(k,0.0)
-          })
-        .sum
+              v * lambdas.getOrElse(k,0.0)
+            })
+          .sum
       scores.put(label, math.exp(score))
     }
-    //val label = scores.maxBy(_._2)._1
     val normalizer = scores.values.sum
     val normedScores = immutable.ListMap() ++ scores.toList.sortBy(-_._2).map{ kv => (kv._1 , kv._2 / normalizer  )}
     val label = normedScores.head._1

@@ -1,0 +1,115 @@
+%%!TEX TS-program = xelatexmk
+\documentclass[oneside,justified,marginals=raggedouter]{tufte-handout}
+\usepackage{fontspec,xltxtra,xunicode}
+\usepackage{enumerate}
+\usepackage{booktabs}
+\usepackage[fleqn]{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz}
+\usetikzlibrary{plotmarks}
+
+\defaultfontfeatures{Mapping=tex-text}
+\setmainfont[%Mapping=tex-text,
+  BoldFont={Haarlemmer MT Std Bold},
+  SlantedFont={Haarlemmer MT Std Italic},
+  ItalicFont={Haarlemmer MT Std Italic},
+  BoldItalicFont={Haarlemmer MT Std Bold Italic},
+  SmallCapsFont={Haarlemmer MT Std: +smcp}
+]{Haarlemmer MT Std}
+\setsansfont[Scale=MatchLowercase,Mapping=tex-text]{TeX Gyre Heros}
+\setmonofont[Scale=MatchLowercase,Ligatures={NoRequired,NoCommon,NoContextual}]{TeX Gyre Cursor}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% XeTeX workaround for tufte-latex (otherwise need to use xetex or nols options)
+\renewcommand{\allcapsspacing}[1]{{\addfontfeature{LetterSpace=20.0}#1}}
+\renewcommand{\smallcapsspacing}[1]{{\addfontfeature{LetterSpace=5.0}#1}}
+\renewcommand{\textsc}[1]{\smallcapsspacing{\textsmallcaps{#1}}}
+\renewcommand{\smallcaps}[1]{\smallcapsspacing{\scshape\MakeTextLowercase{#1}}}
+
+\widowpenalty=1000
+\clubpenalty=1000
+\raggedbottom
+\hyphenpenalty=5000
+\tolerance=1000
+
+\title{LING 572 Homework 5}
+\author{David McHugh and Chris Curtis}
+\date{14 Feb 2013}
+
+\clearpage\relax
+
+\begin{document}
+\maketitle
+
+
+\section{Question 1}
+
+The commands we used to import the scripts into MALLET binary format are:
+
+{\small
+\begin{verbatim}
+% mallet import-svmlight --input /opt/dropbox/12-13/572/hw5/examples/train2.vectors.txt \
+   --output q1/train2.vectors
+
+% mallet import-svmlight --input /opt/dropbox/12-13/572/hw5/examples/test2.vectors.txt \
+    --output q1/test2.vectors --use-pipe-from q1/train2.vectors
+\end{verbatim}
+}
+
+After building the binary vector files, we trained and tested the classifier using the following command:
+
+{\small
+\begin{verbatim}
+% vectors2classify --training-file q1/train2.vectors --testing-file q1/test2.vectors \
+   --trainer MaxEnt --output-classifier q1/m1
+\end{verbatim}
+}
+
+Finally, we created the text representation of the model as follows:
+
+{\small
+\begin{verbatim}
+% classifier2info --classifier q1/m1 > q1/m1.txt
+\end{verbatim}
+}
+
+Using these commands, we achieved the following accuracies:
+
+\vskip\baselineskip
+\begin{tabular}{@{}rl@{}}
+\toprule
+& accuracy \\
+\midrule
+Training & 0.968519 \\
+Test &  0.826667 \\
+\bottomrule
+\end{tabular}
+
+
+\section{Question 2}
+
+When running our MaxEnt classifier implementation via
+
+{\small
+\begin{verbatim}
+% maxent_classify.sh test2.vectors.txt q1/m1.txt q2/res > q2/acc
+\end{verbatim}
+}
+
+We achieved a test accuracy of 0.826667, which is identical to the result from MALLET. The results
+are identical because the model is exactly the model MALLET trained, and so applying the MaxEnt
+decoding formula results in the same class probabilities for each instance; thus, since all class
+label decisions are the same the accuracy is identical.
+
+\section{Question 3}
+
+Nothing to report for this question.
+
+\section{Question 4}
+
+Nothing to report for this question.
+
+
+
+\end{document}
